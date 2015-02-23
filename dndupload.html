@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Stih</title>
+
+<link href="bootstrap/bootstrap.min.css" rel="stylesheet" media="screen"> 
+<script src="jquery/jquery-2.1.3.js"></script>
+<script src="bootstrap/bootstrap.min.js"></script>
+
+<link href="dndupload.css" rel="stylesheet" media="screen"> 
+<script src="dndupload.js"></script>
+
+</head>
+<body>
+ 
+<div class="panel panel-default" style="width:190px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">Imagine atasata</h3>
+	</div>
+	<div class="panel-body" >	
+		<div class="js-upload-panel" >					
+		</div>			
+	</div>
+</div>
+
+<script>
+	
+	$("div.js-upload-panel").dndupload({
+		uploadUrl:"upload.php",
+		deleteUrl:"delete.php",
+		emptyResourceText: "Trage imaginea aici<br/> sau<br/> apasa click!"
+	});
+		
+</script>
+
+</body></html>

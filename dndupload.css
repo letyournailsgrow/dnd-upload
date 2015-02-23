@@ -1,0 +1,31 @@
+.upload-drop-zone {
+	border: 1px dashed #ccc; 
+	text-align:center;
+	display:table-cell;
+	vertical-align: middle;
+	width: 160px;
+	height: 200px;
+	
+	position: relative;
+	background-color: #fafafa;
+}
+
+.drop {
+  border-color: #222;
+}
+
+#js-uplod-panel{
+	display: table;  
+}
+
+.hidden { 
+	display: none !important;
+}
+
+.upload-tools{
+	position: absolute;
+	bottom: 2px;
+	right: 2px;
+	z-index: 999;
+	display: inline-block;
+}
