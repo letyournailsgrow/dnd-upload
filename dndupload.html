@@ -26,9 +26,15 @@
 <script>
 	
 	$("div.js-upload-panel").dndupload({
-		uploadUrl:"upload.php",
+		uploadUrl:"php/db/db-creation-dao.php?method=uploadImage",
 		deleteUrl:"delete.php",
-		emptyResourceText: "Trage imaginea aici<br/> sau<br/> apasa click!"
+		emptyResourceText: "Trage imaginea aici<br/> sau<br/> apasa click!",
+                extraUploadData:{id:$("#idCurrentCreation").html()},
+		extraDeleteData:{id:$("#idCurrentCreation").html()},
+		onErrorDeleteFile:function(data){
+			var imgError=data.errorMessage["error"];	     		    	
+			appDialog.showDefault("Eroare",messages[imgError],120);	
+		}	
 	});
 		
 </script>

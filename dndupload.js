@@ -31,6 +31,8 @@
 						 
 			deleteUrl:"#",
 			uploadUrl:"#",
+                        extraDeleteData:{},
+                        extraUploadData:{},    
 			
 			onBeforeUpload:function(){},
 			onAfterUpload:function(){},
@@ -84,18 +86,33 @@
 				return false;
 			},
 			
+                        onErrorDeleteFile:function(data){
+                        },
+
 			onDeleteFile : function(e) {
 				e.stopPropagation();
-				
-				var image = new Image();
-				$this.find(".upload-drop-zone > img").replaceWith(image);
-				$this.find(".emptyResource").removeClass("hidden"); 
-				
-				existResource = false;    
-				$this.find(".upload-tools").addClass("hidden"); 
-			},
-			
 
+				var deleteUrl=$this.settings.uploadUrl;
+
+                                $.post(deleteUrl,
+				        $this.settings.extraDeleteData, 
+				        function(data) {
+					      var data = eval('(' + data + ')');
+					      if (data.success==true){
+							var image = new Image();
+				                        $this.find(".upload-drop-zone > img").replaceWith(image);
+				                        $this.find(".emptyResource").removeClass("hidden"); 
+				
+				                        existResource = false;    
+				                        $this.find(".upload-tools").addClass("hidden"); 
+					      }else{
+                                                        $this.settings.onErrorDeleteFile(data);
+							var imgError=data.errorMessage["error"];	     		    
+					    		appDialog.showDefault("Eroare",messages[imgError],120);	
+					      }	  			
+														  	  			  					  	  									  					  	  										
+				});		
+			},
 		}
 				
 		$this.settings = {}
@@ -153,14 +170,18 @@
 
 		$this.readFile = function readFile(file) {   
 			var formData = tests.formdata ? new FormData() : null;
-			
+			formData.append("file", file);
+                        formData.append("id", $this.settings.extraUploadData.id); // TODO: de tinut cont de toti parametrii
+
 			$this.previewUploadFile(file);
 			
 			if (tests.formdata) {
 				var xhr = new XMLHttpRequest();
-				xhr.open('POST', '/devnull.php');
+				xhr.open('POST', $this.settings.uploadUrl);
 				xhr.onload = function() {
+                                        var progress = $this.find(".progress"); 
 					progress.value = progress.innerHTML = 100;
+                                        console.log(progress);
 				};
 
 				if (tests.progress) {
@@ -169,12 +190,14 @@
 							var complete = (event.loaded / event.total * 100 | 0);
 							var progress = $this.find(".progress"); 
 							progress.value = progress.innerHTML = complete;
+                                                        console.log(complete);
 						}
 					}
 				}
 
 				xhr.send(formData);
 			}
+                       
 		}
 				
 		init();
