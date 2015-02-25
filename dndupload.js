@@ -31,6 +31,8 @@
 						 
 			deleteUrl:"#",
 			uploadUrl:"#",
+                        initialImageUrl:"#",
+
                         extraDeleteData:{},
                         extraUploadData:{},    
 			
@@ -39,6 +41,8 @@
 			
 			onBeforeDelete:function(){},
 			onAfterDelete:function(){},
+
+                        widthImage:160,
 			
 			onClick:function(){								
 				$("input[class='js-upload-file']").click();
@@ -92,7 +96,7 @@
 			onDeleteFile : function(e) {
 				e.stopPropagation();
 
-				var deleteUrl=$this.settings.uploadUrl;
+				var deleteUrl=$this.settings.deleteUrl;
 
                                 $.post(deleteUrl,
 				        $this.settings.extraDeleteData, 
@@ -158,7 +162,7 @@
 			reader.onload = function (event) {
 				var image = new Image();
 				image.src = event.target.result;
-				image.width = 156; 			
+				image.width = $this.settings.widthImage-4; 			
 				$this.find(".upload-drop-zone > img").replaceWith(image);
 				$this.find(".emptyResource").addClass("hidden"); 
 				existResource = true;   
@@ -201,8 +205,18 @@
 		}
 				
 		init();
-		
-        return this;
+
+                var initialImageUrl = $this.settings.initialImageUrl;
+                if (initialImageUrl != "#"){
+		       var image = $this.find(".upload-drop-zone > img");
+                       image.attr("src", initialImageUrl);
+                       image.attr("width", $this.settings.widthImage-4);
+
+		       $this.find(".emptyResource").addClass("hidden"); 
+		       existResource = true; 
+                }
+ 
+                return this;
  
     };
 		
