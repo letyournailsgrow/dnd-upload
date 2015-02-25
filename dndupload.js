@@ -39,7 +39,10 @@
 			onBeforeUpload:function(){},
 			onAfterUpload:function(){},
 			
-			onBeforeDelete:function(){},
+			onBeforeDelete:function(action){
+                            action();
+                        },
+
 			onAfterDelete:function(){},
 
                         widthImage:160,
@@ -96,8 +99,11 @@
 			onDeleteFile : function(e) {
 				e.stopPropagation();
 
-				var deleteUrl=$this.settings.deleteUrl;
+				$this.settings.onBeforeDelete( $this.settings.deleteFile );	
+			},
 
+                        deleteFile : function(){
+                                var deleteUrl=$this.settings.deleteUrl;
                                 $.post(deleteUrl,
 				        $this.settings.extraDeleteData, 
 				        function(data) {
@@ -115,8 +121,8 @@
 					    		appDialog.showDefault("Eroare",messages[imgError],120);	
 					      }	  			
 														  	  			  					  	  									  					  	  										
-				});		
-			},
+				});	
+                        }
 		}
 				
 		$this.settings = {}
