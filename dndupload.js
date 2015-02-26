@@ -189,7 +189,6 @@
                         var progress = $this.find(".progress"); 
 			progress.removeClass("hidden"); 
 
-
 			$this.previewUploadFile(file);
  
 			if (tests.formdata) {
@@ -199,21 +198,20 @@
                                        
 	                                progressBar.css("width","100%");   
                                         progressBar.attr("aria-valuenow",100);  
+
                                         progress.addClass("hidden"); 
+
                                         existResource = true; 
-                                        console.log(progress);
+                                   
 				};
 
 				if (tests.progress) {
 					xhr.upload.onprogress = function (event) {
 						if (event.lengthComputable) {
 							var complete = (event.loaded / event.total * 100 | 0);
-							
-                                                       
+
 							progressBar.css("width",complete+"%");   
                                                         progressBar.attr("aria-valuenow",complete);     
-                                                   
-                                                        console.log(complete);
 						}
 					}
 				}
