@@ -11,23 +11,25 @@
 			emptyResourceText: "Drag and drop<br/>or<br/> click!",
 			
 			dropZoneTemplate: '<div class="upload-drop-zone" >'+
-									'<div class="emptyResource">Trage imaginea aici<br/> sau<br/> apasa click!</div>'+
-									'<img/>'+
-									'<div class="upload-tools hidden">'+
-										'<div class="btn btn-xs btn-default delete-file" title="Remove">'+
-											'<i class="glyphicon glyphicon-trash" style="color:red"></i>'+
-										'</div>'+
-									'</div>'+
-							  '</div>',			
+						'<div class="emptyResource">Trage imaginea aici<br/> sau<br/> apasa click!</div>'+
+						'<img/>'+
+  
+						'<div class="upload-tools hidden">'+
+							'<div class="btn btn-xs btn-default delete-file" title="Remove">'+
+								'<i class="glyphicon glyphicon-trash" style="color:red"></i>'+
+							'</div>'+
+						'</div>'+
+
+                                                '<div class="progress hidden" style="width:100%;">'+
+							'<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">'+			
+							'</div>'+
+						'</div>'+
+					   '</div>',			
 			
 			formTemplate:'<form action="" method="post" enctype="multipart/form-data" id="js-upload-form" class="hidden">'+
-							'<input type="file" name="file" class="js-upload-file">'+      
-						 '</form>',
+					   '<input type="file" name="file" class="js-upload-file">'+      
+				     '</form>',
 						 
-			progressTemplate: '<div class="progress hidden">'+
-								'<div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">'+			
-								'</div>'+
-							  '</div>',
 						 
 			deleteUrl:"#",
 			uploadUrl:"#",
@@ -77,7 +79,7 @@
 			onDrop : function(e) {
 				e.preventDefault();
 				$this.removeClass("drop");
-				
+				existResource = false; 
 				var file = e.originalEvent.dataTransfer.files[0];
 				$this.readFile(file);
 				$this.settings.startUpload(file);
@@ -132,8 +134,7 @@
 			
 			$container = $(document.createElement("span")).html(
 				$this.settings.dropZoneTemplate +
-				$this.settings.formTemplate +
-				$this.settings.progressTemplate );	
+				$this.settings.formTemplate);	
 				
 			$this.html( $container );	
 			$this.off('click').on('click', '.upload-drop-zone',$.proxy($this.settings.onClick, $this));	
@@ -170,8 +171,7 @@
 				image.src = event.target.result;
 				image.width = $this.settings.widthImage-4; 			
 				$this.find(".upload-drop-zone > img").replaceWith(image);
-				$this.find(".emptyResource").addClass("hidden"); 
-				existResource = true;   
+				$this.find(".emptyResource").addClass("hidden");   
 			};
 
 			reader.readAsDataURL(file);
@@ -183,14 +183,24 @@
 			formData.append("file", file);
                         formData.append("id", $this.settings.extraUploadData.id); // TODO: de tinut cont de toti parametrii
 
+                        var progressBar = $this.find(".progress-bar"); 
+                        progressBar.css("width","0%");   
+                        progressBar.attr("aria-valuenow",0);  
+                        var progress = $this.find(".progress"); 
+			progress.removeClass("hidden"); 
+
+
 			$this.previewUploadFile(file);
-			
+ 
 			if (tests.formdata) {
 				var xhr = new XMLHttpRequest();
 				xhr.open('POST', $this.settings.uploadUrl);
 				xhr.onload = function() {
-                                        var progress = $this.find(".progress"); 
-					progress.value = progress.innerHTML = 100;
+                                       
+	                                progressBar.css("width","100%");   
+                                        progressBar.attr("aria-valuenow",100);  
+                                        progress.addClass("hidden"); 
+                                        existResource = true; 
                                         console.log(progress);
 				};
 
@@ -198,8 +208,11 @@
 					xhr.upload.onprogress = function (event) {
 						if (event.lengthComputable) {
 							var complete = (event.loaded / event.total * 100 | 0);
-							var progress = $this.find(".progress"); 
-							progress.value = progress.innerHTML = complete;
+							
+                                                       
+							progressBar.css("width",complete+"%");   
+                                                        progressBar.attr("aria-valuenow",complete);     
+                                                   
                                                         console.log(complete);
 						}
 					}
@@ -217,9 +230,9 @@
 		       var image = $this.find(".upload-drop-zone > img");
                        image.attr("src", initialImageUrl);
                        image.attr("width", $this.settings.widthImage-4);
-
+                       existResource = true;  
 		       $this.find(".emptyResource").addClass("hidden"); 
-		       existResource = true; 
+		 
                 }
  
                 return this;
